@@ -13,6 +13,13 @@ const verbDefs = document.getElementById("verb-definitions");
 const audioBtn = document.getElementById("audio-btn");
 const audio = document.getElementById("audio");
 const fontSelect = document.getElementById("font-select");
+const inputLoader = document.getElementById("input-loader");
+const emptyError = document.getElementById("empty-error");
+const loader = document.getElementById("loader");
+
+window.addEventListener("load", () => {
+  loader.style.display = "none";
+});
 
 function reset() {
   nounSection.classList.add("hidden");
@@ -24,6 +31,7 @@ function reset() {
 
 function showError() {
   error.classList.remove("hidden");
+  reset();
 }
 
 function hideAll() {
@@ -62,18 +70,47 @@ elCheckbox.addEventListener("change", () => {
   }
 });
 
-elWordInput.addEventListener("change", (e) => {
-  const word = e.target.value.trim();
-  fetchWord(word);
+// Enter bosilganda qidirish
+elWordInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    const word = e.target.value.trim();
+    fetchWord(word);
+  }
+});
+
+// Inputga yozilsa errorlarni yashirish
+elWordInput.addEventListener("input", () => {
+  emptyError.classList.add("hidden");
+  error.classList.add("hidden");
 });
 
 function fetchWord(word) {
+  if (word.length === 0) {
+    elWordInput.focus();
+    emptyError.classList.remove("hidden");
+    hideAll();
+    reset();
+    return;
+  }
+
+  emptyError.classList.add("hidden");
+
   hideAll();
+  reset();
+  inputLoader.style.display = "flex";
+
+  elWordInput.value = word;
 
   fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
     .then((res) => res.json())
-    .then((data) => ui(data[0]))
-    .catch(() => showError());
+    .then((data) => {
+      ui(data[0]);
+      inputLoader.style.display = "none";
+    })
+    .catch(() => {
+      showError();
+      inputLoader.style.display = "none";
+    });
 }
 
 function ui(data) {
