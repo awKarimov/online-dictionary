@@ -70,7 +70,6 @@ elCheckbox.addEventListener("change", () => {
   }
 });
 
-// Enter bosilganda qidirish
 elWordInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     const word = e.target.value.trim();
@@ -78,7 +77,6 @@ elWordInput.addEventListener("keydown", (e) => {
   }
 });
 
-// Inputga yozilsa errorlarni yashirish
 elWordInput.addEventListener("input", () => {
   emptyError.classList.add("hidden");
   error.classList.add("hidden");
