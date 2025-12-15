@@ -1,42 +1,46 @@
-const header = document.getElementById("header");
-const main = document.getElementById("main");
-
 const elCheckbox = document.getElementById("darkMode");
 const elWordInput = document.getElementById("word-input");
-
 const section = document.getElementById("word-section");
 const error = document.getElementById("error");
-
 const elTitle = document.getElementById("title");
 const elPronounciation = document.getElementById("pronounciation");
-
 const nounSection = document.getElementById("noun-block");
 const nounDefs = document.getElementById("noun-definitions");
 const nounSynonyms = document.getElementById("noun-synonyms");
 const nounSynonymsList = document.getElementById("noun-synonyms-list");
-
 const verbSection = document.getElementById("verb-block");
 const verbDefs = document.getElementById("verb-definitions");
-
 const audioBtn = document.getElementById("audio-btn");
 const audio = document.getElementById("audio");
-
 const fontSelect = document.getElementById("font-select");
+
+function reset() {
+  nounSection.classList.add("hidden");
+  verbSection.classList.add("hidden");
+  nounSynonyms.classList.add("hidden");
+  nounDefs.innerHTML = "";
+  verbDefs.innerHTML = "";
+}
+
+function showError() {
+  error.classList.remove("hidden");
+}
+
+function hideAll() {
+  section.classList.add("hidden");
+  error.classList.add("hidden");
+}
 
 let savedFont = localStorage.getItem("font") || "mono";
 document.body.classList.add(`font-${savedFont}`);
 fontSelect.value = savedFont;
 
-// Select o‘zgarganda fontni yangilash
 fontSelect.addEventListener("change", (e) => {
-  // Eski font klassini olib tashlash
   document.body.classList.remove(`font-${savedFont}`);
 
-  // Yangi font klassini qo‘shish
   savedFont = e.target.value;
   document.body.classList.add(`font-${savedFont}`);
 
-  // localStorage’ga saqlash
   localStorage.setItem("font", savedFont);
 });
 
@@ -68,7 +72,7 @@ function fetchWord(word) {
 
   fetch(`https://api.dictionaryapi.dev/api/v2/entries/en/${word}`)
     .then((res) => res.json())
-    .then((data) => ui(data[0]), reset())
+    .then((data) => ui(data[0]))
     .catch(() => showError());
 }
 
@@ -134,21 +138,4 @@ function playAudio(phonetics) {
   audio.src = audioData.audio;
   audioBtn.classList.remove("hidden");
   audioBtn.onclick = () => audio.play();
-}
-
-function hideAll() {
-  section.classList.add("hidden");
-  error.classList.add("hidden");
-}
-
-function showError() {
-  error.classList.remove("hidden");
-}
-
-function reset() {
-  nounSection.classList.add("hidden");
-  verbSection.classList.add("hidden");
-  nounSynonyms.classList.add("hidden");
-  nounDefs.innerHTML = "";
-  verbDefs.innerHTML = "";
 }
